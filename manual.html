@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>주니어 능률 VOCA - 사용 매뉴얼</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif;background:#1a1a2e;color:#fff;overflow:hidden;height:100vh;user-select:none;-webkit-tap-highlight-color:transparent}
+
+/* Slide container */
+.slides-wrapper{display:flex;transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);height:100vh;width:100%}
+.slide{min-width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;position:relative;overflow-y:auto}
+
+/* Slide themes */
+.slide-cover{background:linear-gradient(135deg,#667eea,#764ba2)}
+.slide-qr{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.slide-feature{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.slide-flash{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.slide-quiz{background:linear-gradient(135deg,#fa709a,#fee140)}
+.slide-wrong{background:linear-gradient(135deg,#a18cd1,#fbc2eb)}
+.slide-hide{background:linear-gradient(135deg,#ffecd2,#fcb69f)}
+.slide-tips{background:linear-gradient(135deg,#667eea,#764ba2)}
+.slide-end{background:linear-gradient(135deg,#f093fb,#f5576c)}
+
+/* Typography */
+.slide h1{font-size:2.2rem;font-weight:800;margin-bottom:16px;text-align:center;line-height:1.3;text-shadow:0 2px 10px rgba(0,0,0,0.2)}
+.slide h2{font-size:1.6rem;font-weight:700;margin-bottom:20px;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.slide p{font-size:1.05rem;line-height:1.7;text-align:center;max-width:500px;opacity:0.95}
+.slide .emoji-big{font-size:4rem;margin-bottom:20px}
+.slide .emoji-huge{font-size:6rem;margin-bottom:16px}
+.slide .subtitle{font-size:1rem;opacity:0.8;margin-top:8px}
+.slide .badge{display:inline-block;background:rgba(255,255,255,0.25);padding:6px 16px;border-radius:20px;font-size:0.85rem;margin-top:12px;backdrop-filter:blur(10px)}
+
+/* Feature list */
+.feature-list{list-style:none;max-width:400px;width:100%}
+.feature-list li{display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,0.15);border-radius:14px;margin-bottom:10px;font-size:0.95rem;backdrop-filter:blur(10px)}
+.feature-list li .f-icon{font-size:1.5rem;flex-shrink:0}
+
+/* Step cards */
+.step-card{background:rgba(255,255,255,0.2);border-radius:20px;padding:24px 20px;max-width:400px;width:100%;margin-top:16px;backdrop-filter:blur(10px)}
+.step-card .step-num{display:inline-block;background:rgba(255,255,255,0.3);width:32px;height:32px;border-radius:50%;text-align:center;line-height:32px;font-weight:800;font-size:0.9rem;margin-bottom:10px}
+.step-card .step-text{font-size:0.95rem;line-height:1.6}
+.step-card + .step-card{margin-top:12px}
+
+/* QR */
+.qr-box{background:#fff;border-radius:20px;padding:20px;margin:20px 0;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
+.qr-box img{width:200px;height:200px;display:block}
+.qr-url{font-size:0.8rem;opacity:0.8;margin-top:8px;word-break:break-all;text-align:center}
+
+/* Navigation */
+.nav-dots{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);cursor:pointer;transition:all 0.3s}
+.nav-dot.active{background:#fff;width:28px;border-radius:5px}
+.nav-arrows{position:fixed;top:50%;width:100%;display:flex;justify-content:space-between;padding:0 12px;z-index:100;pointer-events:none}
+.nav-arrow{pointer-events:auto;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,0.2);color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);transition:opacity 0.3s}
+.nav-arrow:active{background:rgba(255,255,255,0.4)}
+.nav-arrow.hidden{opacity:0;pointer-events:none}
+.page-num{position:fixed;top:16px;right:20px;font-size:0.8rem;opacity:0.6;z-index:100}
+
+/* Dark text for light slides */
+.slide-hide h2,.slide-hide p,.slide-hide .step-text,.slide-hide .step-num{color:#4a4a4a}
+.slide-hide .badge{background:rgba(0,0,0,0.1);color:#4a4a4a}
+
+/* Print button */
+.print-btn{position:fixed;top:16px;left:20px;padding:8px 16px;border-radius:20px;border:none;background:rgba(255,255,255,0.2);color:#fff;font-size:0.75rem;cursor:pointer;z-index:100;backdrop-filter:blur(10px)}
+.print-btn:active{background:rgba(255,255,255,0.4)}
+
+@media print{
+  .slides-wrapper{display:block;transform:none!important}
+  .slide{min-width:auto;height:auto;page-break-after:always;padding:40px;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .nav-dots,.nav-arrows,.page-num,.print-btn{display:none}
+}
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">&#x1F5A8; &#xC778;&#xC1C4;</button>
+<div class="page-num" id="page-num">1 / 9</div>
+
+<div class="nav-arrows">
+  <button class="nav-arrow hidden" id="prev-arrow" onclick="goSlide(current-1)">&#9664;</button>
+  <button class="nav-arrow" id="next-arrow" onclick="goSlide(current+1)">&#9654;</button>
+</div>
+
+<div class="nav-dots" id="nav-dots"></div>
+
+<div class="slides-wrapper" id="slides-wrapper">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide slide-cover">
+    <div class="emoji-huge">&#x1F4DA;</div>
+    <h1>&#xC8FC;&#xB2C8;&#xC5B4; &#xB2A5;&#xB960; VOCA &#xAE30;&#xBCF8;</h1>
+    <p>&#xC601;&#xC5B4; &#xB2E8;&#xC5B4; &#xD559;&#xC2B5; &#xC571; &#xC0AC;&#xC6A9; &#xB9E4;&#xB274;&#xC5BC;</p>
+    <div class="badge">DAY 01~60 &#xB2E8;&#xC5B4; 1,200&#xAC1C;</div>
+    <p class="subtitle" style="margin-top:24px;opacity:0.6">&#x2190; &#xC606;&#xC73C;&#xB85C; &#xB118;&#xACA8;&#xC8FC;&#xC138;&#xC694; &#x2192;</p>
+  </div>
+
+  <!-- SLIDE 2: QR Code -->
+  <div class="slide slide-qr">
+    <div class="emoji-big">&#x1F4F1;</div>
+    <h2>&#xD578;&#xB4DC;&#xD3F0;&#xC73C;&#xB85C; &#xC811;&#xC18D;&#xD558;&#xAE30;</h2>
+    <div class="qr-box">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://yeunsu0918.github.io/jr-voca-app/" alt="QR Code">
+    </div>
+    <p class="qr-url">https://yeunsu0918.github.io/jr-voca-app/</p>
+    <p style="margin-top:12px">QR&#xCF54;&#xB4DC;&#xB97C; &#xCE74;&#xBA54;&#xB77C;&#xB85C; &#xC2A4;&#xCE94;&#xD558;&#xBA74;<br>&#xBC14;&#xB85C; &#xC571;&#xC774; &#xC5F4;&#xB824;&#xC694;!</p>
+    <div class="badge">&#xC124;&#xCE58; &#xD544;&#xC694; &#xC5C6;&#xC74C; &#xB7; &#xBB34;&#xB8CC;</div>
+  </div>
+
+  <!-- SLIDE 3: Features -->
+  <div class="slide slide-feature">
+    <h2>&#xC8FC;&#xC694; &#xAE30;&#xB2A5;</h2>
+    <ul class="feature-list">
+      <li><span class="f-icon">&#x1F4C7;</span>&#xD50C;&#xB798;&#xC2DC;&#xCE74;&#xB4DC; - &#xCE74;&#xB4DC; &#xB118;&#xAE30;&#xBA70; &#xB2E8;&#xC5B4; &#xC678;&#xC6B0;&#xAE30;</li>
+      <li><span class="f-icon">&#x2753;</span>&#xAC1D;&#xAD00;&#xC2DD; &#xD038;&#xC988; - 4&#xC9C0;&#xC120;&#xB2E4; &#xBB38;&#xC81C;</li>
+      <li><span class="f-icon">&#x270D;&#xFE0F;</span>&#xC8FC;&#xAD00;&#xC2DD; &#xD038;&#xC988; - &#xC9C1;&#xC811; &#xC785;&#xB825;&#xD558;&#xAE30;</li>
+      <li><span class="f-icon">&#x1F4D3;</span>&#xC624;&#xB2F5;&#xB178;&#xD2B8; - &#xD2C0;&#xB9B0; &#xB2E8;&#xC5B4; &#xC790;&#xB3D9; &#xC800;&#xC7A5;</li>
+      <li><span class="f-icon">&#x1F50A;</span>&#xBC1C;&#xC74C; &#xC7AC;&#xC0DD; - &#xC601;&#xC5B4; &#xBC1C;&#xC74C; &#xB4E3;&#xAE30;</li>
+      <li><span class="f-icon">&#x2B50;</span>&#xD559;&#xC2B5; &#xC9C4;&#xB3C4; &#xCD94;&#xC801;</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 4: Flashcard -->
+  <div class="slide slide-flash">
+    <div class="emoji-big">&#x1F4C7;</div>
+    <h2>&#xD50C;&#xB798;&#xC2DC;&#xCE74;&#xB4DC; &#xC0AC;&#xC6A9;&#xBC95;</h2>
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-text">DAY&#xB97C; &#xC120;&#xD0DD;&#xD558;&#xACE0; <strong>&#xD50C;&#xB798;&#xC2DC;&#xCE74;&#xB4DC;</strong> &#xBC84;&#xD2BC;&#xC744; &#xB20C;&#xB7EC;&#xC694;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-text">&#xC601;&#xC5B4; &#xB2E8;&#xC5B4;&#xAC00; &#xBCF4;&#xC774;&#xBA74; <strong>&#xCE74;&#xB4DC;&#xB97C; &#xD0ED;</strong>&#xD574;&#xC11C; &#xB73B;&#xC744; &#xD655;&#xC778;&#xD574;&#xC694;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-text">&#xC678;&#xC6E0;&#xC73C;&#xBA74; <strong>&#xC54C;&#xACA0;&#xC5B4;&#xC694;!</strong> &#xBC84;&#xD2BC;&#xC744; &#xB20C;&#xB7EC;&#xC694;</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Quiz -->
+  <div class="slide slide-quiz">
+    <div class="emoji-big">&#x1F4DD;</div>
+    <h2>&#xD038;&#xC988; &#xC0AC;&#xC6A9;&#xBC95;</h2>
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>&#xAC1D;&#xAD00;&#xC2DD;</strong>: &#xC601;&#xC5B4; &#xBCF4;&#xACE0; &#xB73B; &#xACE0;&#xB974;&#xAE30; / &#xB73B; &#xBCF4;&#xACE0; &#xC601;&#xC5B4; &#xACE0;&#xB974;&#xAE30;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>&#xC8FC;&#xAD00;&#xC2DD;</strong>: &#xC601;&#xC5B4; &#xBCF4;&#xACE0; &#xB73B; &#xC4F0;&#xAE30; / &#xB73B; &#xBCF4;&#xACE0; &#xC601;&#xC5B4; &#xC4F0;&#xAE30;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-text">80% &#xC774;&#xC0C1; &#xB9DE;&#xCD94;&#xBA74; &#x1F389; &#xD3ED;&#xC8FD; &#xD6A8;&#xACFC;!</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Wrong Note -->
+  <div class="slide slide-wrong">
+    <div class="emoji-big">&#x1F4D3;</div>
+    <h2>&#xC624;&#xB2F5;&#xB178;&#xD2B8;</h2>
+    <div class="step-card">
+      <div class="step-num">&#x2713;</div>
+      <div class="step-text">&#xD038;&#xC988;&#xC5D0;&#xC11C; <strong>&#xD2C0;&#xB9B0; &#xB2E8;&#xC5B4;&#xAC00; &#xC790;&#xB3D9; &#xC800;&#xC7A5;</strong>&#xB429;&#xB2C8;&#xB2E4;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">&#x2713;</div>
+      <div class="step-text">&#xD558;&#xB2E8; <strong>&#xC624;&#xB2F5;&#xB178;&#xD2B8;</strong> &#xD0ED;&#xC744; &#xB204;&#xB974;&#xBA74; DAY&#xBCC4;&#xB85C; &#xD2C0;&#xB9B0; &#xB2E8;&#xC5B4;&#xB97C; &#xBCFC; &#xC218; &#xC788;&#xC5B4;&#xC694;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">&#x2713;</div>
+      <div class="step-text"><strong>DAY &#xD038;&#xC988;</strong> &#xBC84;&#xD2BC;&#xC73C;&#xB85C; &#xD2C0;&#xB9B0; &#xBB38;&#xC81C;&#xB9CC; &#xB2E4;&#xC2DC; &#xD480; &#xC218; &#xC788;&#xC5B4;&#xC694;</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Hide toggle -->
+  <div class="slide slide-hide">
+    <div class="emoji-big">&#x1F648;</div>
+    <h2>&#xB73B; &#xC228;&#xAE30;&#xAE30; &#xAE30;&#xB2A5;</h2>
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-text">&#xB2E8;&#xC5B4; &#xBAA9;&#xB85D;&#xC5D0;&#xC11C; <strong>&#xB73B; &#xC228;&#xAE30;&#xAE30;</strong> &#xBC84;&#xD2BC;&#xC744; &#xB20C;&#xB7EC;&#xC694;</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-text">&#xD55C;&#xAE00; &#xB73B;&#xC774; &#xC228;&#xACA8;&#xC838;&#xC694;. <strong>&#xD130;&#xCE58;&#xD558;&#xBA74;</strong> &#xC7A0;&#xAE50; &#xBCF4;&#xC5EC;&#xC694;!</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-text">&#xC601;&#xC5B4; &#xB2E8;&#xC5B4;&#xB9CC; &#xBCF4;&#xACE0; &#xB73B;&#xC744; &#xB5A0;&#xC62C;&#xB824;&#xBCF4;&#xB294; <strong>&#xC790;&#xAC00; &#xD14C;&#xC2A4;&#xD2B8;</strong>!</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Tips -->
+  <div class="slide slide-tips">
+    <div class="emoji-big">&#x1F4A1;</div>
+    <h2>&#xD559;&#xC2B5; &#xD301;</h2>
+    <ul class="feature-list">
+      <li><span class="f-icon">1&#xFE0F;&#x20E3;</span>&#xBA3C;&#xC800; &#xD50C;&#xB798;&#xC2DC;&#xCE74;&#xB4DC;&#xB85C; &#xB2E8;&#xC5B4;&#xB97C; &#xC775;&#xD600;&#xC694;</li>
+      <li><span class="f-icon">2&#xFE0F;&#x20E3;</span>&#xAC1D;&#xAD00;&#xC2DD; &#xD038;&#xC988;&#xB85C; &#xD655;&#xC778;&#xD574;&#xC694;</li>
+      <li><span class="f-icon">3&#xFE0F;&#x20E3;</span>&#xC624;&#xB2F5;&#xB178;&#xD2B8;&#xC5D0;&#xC11C; &#xD2C0;&#xB9B0; &#xB2E8;&#xC5B4;&#xB9CC; &#xBCF5;&#xC2B5;!</li>
+      <li><span class="f-icon">4&#xFE0F;&#x20E3;</span>&#xC8FC;&#xAD00;&#xC2DD;&#xC73C;&#xB85C; &#xC644;&#xBCBD; &#xB9C8;&#xBB34;&#xB9AC;!</li>
+    </ul>
+    <div class="badge">&#xB9E4;&#xC77C; 1~2&#xAC1C; DAY&#xC529; &#xAFB8;&#xC900;&#xD788;!</div>
+  </div>
+
+  <!-- SLIDE 9: End -->
+  <div class="slide slide-end">
+    <div class="emoji-huge">&#x1F680;</div>
+    <h1>&#xC2DC;&#xC791;&#xD574;&#xBCFC;&#xAE4C;&#xC694;?</h1>
+    <div class="qr-box">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://yeunsu0918.github.io/jr-voca-app/" alt="QR Code">
+    </div>
+    <p class="qr-url">https://yeunsu0918.github.io/jr-voca-app/</p>
+    <div class="badge" style="margin-top:16px">&#xC9C0;&#xAE08; &#xBC14;&#xB85C; &#xC2A4;&#xCE94;&#xD574;&#xBCF4;&#xC138;&#xC694;!</div>
+  </div>
+
+</div>
+
+<script>
+let current = 0;
+const wrapper = document.getElementById('slides-wrapper');
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const dotsContainer = document.getElementById('nav-dots');
+const pageNum = document.getElementById('page-num');
+const prevArrow = document.getElementById('prev-arrow');
+const nextArrow = document.getElementById('next-arrow');
+
+// Create dots
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goSlide(i);
+  dotsContainer.appendChild(dot);
+}
+
+function goSlide(idx) {
+  if (idx < 0 || idx >= total) return;
+  current = idx;
+  wrapper.style.transform = `translateX(-${current * 100}vw)`;
+  document.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.className = 'nav-dot' + (i === current ? ' active' : '');
+  });
+  pageNum.textContent = `${current + 1} / ${total}`;
+  prevArrow.className = 'nav-arrow' + (current === 0 ? ' hidden' : '');
+  nextArrow.className = 'nav-arrow' + (current === total - 1 ? ' hidden' : '');
+}
+
+// Touch swipe
+let startX = 0;
+let isDragging = false;
+
+document.addEventListener('touchstart', e => {
+  startX = e.touches[0].clientX;
+  isDragging = true;
+});
+
+document.addEventListener('touchend', e => {
+  if (!isDragging) return;
+  isDragging = false;
+  const diff = startX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) goSlide(current + 1);
+    else goSlide(current - 1);
+  }
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goSlide(current + 1); }
+  else if (e.key === 'ArrowLeft') goSlide(current - 1);
+});
+
+// Mouse drag (desktop)
+let mouseStartX = 0;
+document.addEventListener('mousedown', e => { mouseStartX = e.clientX; });
+document.addEventListener('mouseup', e => {
+  const diff = mouseStartX - e.clientX;
+  if (Math.abs(diff) > 80) {
+    if (diff > 0) goSlide(current + 1);
+    else goSlide(current - 1);
+  }
+});
+</script>
+</body>
+</html>
