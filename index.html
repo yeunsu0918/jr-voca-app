@@ -43,6 +43,28 @@ body[data-theme="night"]{
   --day-card-complete-bg:linear-gradient(135deg,#34574F,#2A3042);
   --shadow:0 4px 18px rgba(0,0,0,0.25);
 }
+body[data-theme="lemon"]{
+  --pink:#F9C74F;--purple:#90BE6D;--mint:#B8F2C8;--yellow:#FFE66D;
+  --blue:#4D96FF;--coral:#F3722C;--lavender:#A7C957;--peach:#FFF7B2;
+  --bg:#FFFCE8;--card-bg:#FFFFFF;--text:#4A4426;--text-light:#827B50;
+  --day-card-bg:linear-gradient(135deg,#FFF6A8,#FFFFFF);
+  --day-card-complete-bg:linear-gradient(135deg,#DDF7A5,#FFFCE8);
+}
+body[data-theme="grape"]{
+  --pink:#F15BB5;--purple:#7B2CBF;--mint:#80FFDB;--yellow:#FEE440;
+  --blue:#00BBF9;--coral:#F72585;--lavender:#C77DFF;--peach:#F7E8FF;
+  --bg:#FBF0FF;--card-bg:#FFFFFF;--text:#3D2557;--text-light:#82699A;
+  --day-card-bg:linear-gradient(135deg,#F2D7FF,#FFFFFF);
+  --day-card-complete-bg:linear-gradient(135deg,#D9C2FF,#EFFFF9);
+}
+body[data-theme="space"]{
+  --pink:#FF6EC7;--purple:#845EC2;--mint:#00C9A7;--yellow:#FFC75F;
+  --blue:#2C73D2;--coral:#FF9671;--lavender:#B39CD0;--peach:#2C2F5B;
+  --bg:#10162B;--card-bg:#202A44;--text:#F7F7FF;--text-light:#B7C0D8;
+  --day-card-bg:linear-gradient(135deg,#25345C,#161C35);
+  --day-card-complete-bg:linear-gradient(135deg,#284C63,#202A44);
+  --shadow:0 5px 20px rgba(0,0,0,0.32);
+}
 body[data-card-size="large"]{
   --flashcard-width:390px;--flashcard-height:260px;--flashcard-word:2.15rem;--flashcard-meaning:1.22rem;
 }
@@ -667,7 +689,10 @@ const THEME_LIST = [
   { id: 'ocean', name: '바다', a: '#5FB3D9', b: '#B6E6DD' },
   { id: 'forest', name: '숲', a: '#7CB884', b: '#F3E6A2' },
   { id: 'sunset', name: '노을', a: '#FF8A5B', b: '#7B61FF' },
-  { id: 'night', name: '밤', a: '#6F79B8', b: '#7BC6B0' }
+  { id: 'night', name: '밤', a: '#6F79B8', b: '#7BC6B0' },
+  { id: 'lemon', name: '레몬', a: '#FFE66D', b: '#4D96FF' },
+  { id: 'grape', name: '포도', a: '#7B2CBF', b: '#F15BB5' },
+  { id: 'space', name: '우주', a: '#10162B', b: '#FF6EC7' }
 ];
 const CARD_SIZE_LIST = [
   { id: 'normal', name: '보통' },
