@@ -151,7 +151,11 @@ body{
 .mode-btn.quiz-btn{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
 .day-word-list{padding:0 16px 16px}
 .day-word-list h3{font-size:0.9rem;color:var(--text-light);margin-bottom:10px;padding-left:4px}
-.day-score{font-size:0.72rem;color:var(--coral);font-weight:700;text-align:right;margin-bottom:8px}
+.day-score{
+  font-size:0.75rem;color:var(--coral);font-weight:700;text-align:center;
+  background:rgba(255,255,255,0.55);border:1px solid rgba(255,154,162,0.25);
+  border-radius:14px;padding:8px 10px;
+}
 .word-item{
   display:flex;align-items:center;gap:10px;padding:10px 14px;
   background:var(--card-bg);border-radius:14px;margin-bottom:8px;
@@ -429,6 +433,7 @@ body{padding-bottom:64px}
     <button class="mode-btn quiz-btn" style="background:linear-gradient(135deg,var(--purple),var(--coral))" onclick="startQuiz(null,'mc-en')">&#x1F524; 객관식 (영어 고르기)</button>
     <button class="mode-btn quiz-btn" style="background:linear-gradient(135deg,var(--mint),var(--blue))" onclick="startQuiz(null,'typing-ko')">&#x270D;&#xFE0F; 주관식 (뜻 쓰기)</button>
     <button class="mode-btn quiz-btn" style="background:linear-gradient(135deg,var(--yellow),var(--mint));color:var(--text)" onclick="startQuiz(null,'typing-en')">&#x2328;&#xFE0F; 주관식 (영어 쓰기)</button>
+    <div class="day-score hidden" id="day-score"></div>
   </div>
   <div class="day-word-list" id="day-word-list">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -437,7 +442,6 @@ body{padding-bottom:64px}
         <button class="hide-toggle" id="hide-ko-btn" onclick="toggleHideKo()">뜻 숨기기</button>
       </div>
     </div>
-    <div class="day-score hidden" id="day-score"></div>
     <div id="word-list-container"></div>
   </div>
 </div>
@@ -931,7 +935,7 @@ function openDay(dayIdx) {
   const scoreEl = document.getElementById('day-score');
   if (bestScore) {
     scoreEl.classList.remove('hidden');
-    scoreEl.textContent = `최고 점수 ${bestScore.bestCorrect}/${bestScore.total} (${bestScore.bestPct}%)`;
+    scoreEl.textContent = `퀴즈 최고 ${bestScore.bestCorrect}/${bestScore.total} (${bestScore.bestPct}%)`;
   } else {
     scoreEl.classList.add('hidden');
     scoreEl.textContent = '';
