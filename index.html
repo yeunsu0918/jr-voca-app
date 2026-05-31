@@ -88,7 +88,7 @@ body{
 .continue-card:active{transform:scale(0.98)}
 .continue-main{font-weight:800;font-size:0.95rem}
 .continue-sub{font-size:0.78rem;color:var(--text-light);margin-top:3px}
-.theme-panel,.card-size-panel,.backup-panel{
+.theme-panel,.backup-panel{
   background:var(--card-bg);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);
 }
 .backup-panel{padding:0;overflow:hidden}
@@ -102,7 +102,7 @@ body{
 .backup-panel .backup-inner{padding:0 14px 14px}
 .parent-help{font-size:0.72rem;color:var(--text-light);line-height:1.5;margin-top:8px}
 .panel-title{font-size:0.78rem;font-weight:800;color:var(--text-light);margin-bottom:9px}
-.theme-buttons,.card-size-buttons,.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.theme-buttons,.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
 .theme-btn,.card-size-btn,.backup-btn{
   border:1px solid #e4dfe5;background:var(--card-bg);color:var(--text);
   border-radius:16px;padding:8px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;
@@ -172,6 +172,12 @@ body{
 /* === FLASHCARD SCREEN === */
 #flashcard-screen{max-width:600px;margin:0 auto;padding:16px;display:flex;flex-direction:column;align-items:center;min-height:60vh}
 .flashcard-progress{font-size:0.85rem;color:var(--text-light);margin-bottom:8px}
+.flashcard-tools{
+  width:100%;max-width:var(--flashcard-width,340px);display:flex;justify-content:center;
+  margin:0 0 10px;
+}
+.card-size-buttons{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.flashcard-tools .card-size-btn{padding:6px 10px;font-size:0.72rem}
 .flashcard-container{
   perspective:1000px;width:100%;max-width:var(--flashcard-width,340px);height:var(--flashcard-height,220px);cursor:pointer;margin:8px 0;
 }
@@ -403,10 +409,6 @@ body{padding-bottom:64px}
       <div class="panel-title">테마</div>
       <div class="theme-buttons" id="theme-buttons"></div>
     </div>
-    <div class="card-size-panel">
-      <div class="panel-title">플래시카드 크기</div>
-      <div class="card-size-buttons" id="card-size-buttons"></div>
-    </div>
     <details class="backup-panel">
       <summary>보호자 메뉴</summary>
       <div class="backup-inner">
@@ -449,6 +451,9 @@ body{padding-bottom:64px}
 <!-- FLASHCARD SCREEN -->
 <div id="flashcard-screen" class="hidden">
   <div class="flashcard-progress" id="flashcard-progress">1 / 20</div>
+  <div class="flashcard-tools">
+    <div class="card-size-buttons" id="card-size-buttons"></div>
+  </div>
   <div class="flashcard-container" onclick="flipCard()">
     <div class="flashcard-inner" id="flashcard-inner">
       <div class="flashcard-front">
@@ -887,7 +892,6 @@ function renderHome() {
   document.getElementById('header-subtitle').classList.remove('hidden');
   document.getElementById('app-version').textContent = `v${APP_VERSION}`;
   renderThemeButtons();
-  renderCardSizeButtons();
 
   const nextDay = getNextDayIndex();
   const nextLearned = getDayLearnedCount(nextDay);
@@ -978,6 +982,7 @@ function startFlashcard() {
   currentCardIndex = 0;
   showScreen('flashcard-screen');
   document.getElementById('header-title').textContent = `DAY ${String(currentDay+1).padStart(2,'0')} 플래시카드`;
+  renderCardSizeButtons();
   renderFlashcard();
 }
 
@@ -1425,6 +1430,7 @@ function startWrongFlashcard() {
 
   window._wrongFlashcardMode = true;
   window._wrongFlashcardData = notes.map(n => ({ en: n.en, ko: n.ko }));
+  renderCardSizeButtons();
   renderFlashcard();
 }
 
