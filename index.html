@@ -33,6 +33,12 @@ body[data-theme="night"]{
   --bg:#1F2433;--card-bg:#2A3042;--text:#F2F4FA;--text-light:#BBC4D6;
   --shadow:0 4px 18px rgba(0,0,0,0.25);
 }
+body[data-card-size="large"]{
+  --flashcard-width:390px;--flashcard-height:260px;--flashcard-word:2.15rem;--flashcard-meaning:1.22rem;
+}
+body[data-card-size="xlarge"]{
+  --flashcard-width:440px;--flashcard-height:310px;--flashcard-word:2.45rem;--flashcard-meaning:1.35rem;
+}
 @font-face{font-family:'emoji';src:local('Segoe UI Emoji'),local('Apple Color Emoji'),local('Noto Color Emoji')}
 body{
   font-family:'Segoe UI','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
@@ -82,16 +88,17 @@ body{
 .continue-card:active{transform:scale(0.98)}
 .continue-main{font-weight:800;font-size:0.95rem}
 .continue-sub{font-size:0.78rem;color:var(--text-light);margin-top:3px}
-.theme-panel,.backup-panel{
+.theme-panel,.card-size-panel,.backup-panel{
   background:var(--card-bg);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);
 }
 .panel-title{font-size:0.78rem;font-weight:800;color:var(--text-light);margin-bottom:9px}
-.theme-buttons,.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
-.theme-btn,.backup-btn{
+.theme-buttons,.card-size-buttons,.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.theme-btn,.card-size-btn,.backup-btn{
   border:1px solid #e4dfe5;background:var(--card-bg);color:var(--text);
   border-radius:16px;padding:8px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;
 }
 .theme-btn.active{border-color:var(--coral);color:var(--coral);background:rgba(255,255,255,0.7)}
+.card-size-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(255,255,255,0.7)}
 .theme-dot{
   display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;
   background:linear-gradient(135deg,var(--dot-a),var(--dot-b));
@@ -152,7 +159,7 @@ body{
 #flashcard-screen{max-width:600px;margin:0 auto;padding:16px;display:flex;flex-direction:column;align-items:center;min-height:60vh}
 .flashcard-progress{font-size:0.85rem;color:var(--text-light);margin-bottom:8px}
 .flashcard-container{
-  perspective:1000px;width:100%;max-width:340px;height:220px;cursor:pointer;margin:8px 0;
+  perspective:1000px;width:100%;max-width:var(--flashcard-width,340px);height:var(--flashcard-height,220px);cursor:pointer;margin:8px 0;
 }
 .flashcard-inner{
   position:relative;width:100%;height:100%;
@@ -169,14 +176,14 @@ body{
 .flashcard-front{
   background:linear-gradient(135deg,#fff,var(--peach));
 }
-.flashcard-front .card-word{font-size:1.8rem;font-weight:800;color:var(--text)}
+.flashcard-front .card-word{font-size:var(--flashcard-word,1.8rem);font-weight:800;color:var(--text)}
 .flashcard-front .card-hint{font-size:0.75rem;color:var(--text-light);margin-top:12px}
 .flashcard-back{
   background:linear-gradient(135deg,var(--mint),#d4f5e9);
   transform:rotateY(180deg);
 }
-.flashcard-back .card-meaning{font-size:1.1rem;font-weight:600;color:var(--text);text-align:center;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
-.flashcard-nav{display:flex;gap:12px;align-items:center;margin-top:12px;width:100%;max-width:340px;justify-content:space-between}
+.flashcard-back .card-meaning{font-size:var(--flashcard-meaning,1.1rem);font-weight:600;color:var(--text);text-align:center;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
+.flashcard-nav{display:flex;gap:12px;align-items:center;margin-top:12px;width:100%;max-width:var(--flashcard-width,340px);justify-content:space-between}
 .nav-arrow{
   width:48px;height:48px;border-radius:50%;border:none;
   background:var(--card-bg);box-shadow:var(--shadow);font-size:1.3rem;
@@ -268,8 +275,8 @@ body{
   .app-header h1{font-size:1.2rem}
   #home-screen .day-grid{grid-template-columns:repeat(auto-fill,minmax(75px,1fr));gap:8px;padding:12px}
   .day-card{padding:10px 6px}
-  .flashcard-container{height:200px}
-  .flashcard-front .card-word{font-size:1.5rem}
+  .flashcard-container{height:min(var(--flashcard-height,220px),280px)}
+  .flashcard-front .card-word{font-size:min(var(--flashcard-word,1.8rem),2.1rem)}
 }
 @media(min-width:768px){
   #home-screen .day-grid{max-width:700px;margin:0 auto;grid-template-columns:repeat(6,1fr)}
@@ -381,6 +388,10 @@ body{padding-bottom:64px}
     <div class="theme-panel">
       <div class="panel-title">테마</div>
       <div class="theme-buttons" id="theme-buttons"></div>
+    </div>
+    <div class="card-size-panel">
+      <div class="panel-title">플래시카드 크기</div>
+      <div class="card-size-buttons" id="card-size-buttons"></div>
     </div>
     <div class="backup-panel">
       <div class="panel-title">학습 기록</div>
@@ -617,12 +628,18 @@ const STORAGE_KEY = 'jr_voca_progress';
 const WRONG_NOTE_KEY = 'jr_voca_wrong_note';
 const SCORE_KEY = 'jr_voca_scores';
 const THEME_KEY = 'jr_voca_theme';
+const CARD_SIZE_KEY = 'jr_voca_card_size';
 const THEME_LIST = [
   { id: 'pink', name: '핑크', a: '#FFB6C1', b: '#C3AED6' },
   { id: 'ocean', name: '바다', a: '#5FB3D9', b: '#B6E6DD' },
   { id: 'forest', name: '숲', a: '#7CB884', b: '#F3E6A2' },
   { id: 'sunset', name: '노을', a: '#FF8FAB', b: '#FFD6A5' },
   { id: 'night', name: '밤', a: '#6F79B8', b: '#7BC6B0' }
+];
+const CARD_SIZE_LIST = [
+  { id: 'normal', name: '보통' },
+  { id: 'large', name: '크게' },
+  { id: 'xlarge', name: '아주 크게' }
 ];
 
 function getProgress() {
@@ -755,9 +772,37 @@ function renderThemeButtons() {
   });
 }
 
+function applyCardSize(sizeId) {
+  const id = CARD_SIZE_LIST.some(s => s.id === sizeId) ? sizeId : 'normal';
+  if (id === 'normal') document.body.removeAttribute('data-card-size');
+  else document.body.dataset.cardSize = id;
+  localStorage.setItem(CARD_SIZE_KEY, id);
+  renderCardSizeButtons();
+}
+
+function renderCardSizeButtons() {
+  const wrap = document.getElementById('card-size-buttons');
+  if (!wrap) return;
+  const current = localStorage.getItem(CARD_SIZE_KEY) || 'normal';
+  wrap.innerHTML = '';
+  CARD_SIZE_LIST.forEach(size => {
+    const btn = document.createElement('button');
+    btn.className = 'card-size-btn' + (size.id === current ? ' active' : '');
+    btn.type = 'button';
+    btn.textContent = size.name;
+    btn.onclick = () => applyCardSize(size.id);
+    wrap.appendChild(btn);
+  });
+}
+
 function initTheme() {
   const theme = localStorage.getItem(THEME_KEY) || 'pink';
   if (theme !== 'pink') document.body.dataset.theme = theme;
+}
+
+function initCardSize() {
+  const size = localStorage.getItem(CARD_SIZE_KEY) || 'normal';
+  if (size !== 'normal') document.body.dataset.cardSize = size;
 }
 
 function getBackupPayload() {
@@ -768,7 +813,8 @@ function getBackupPayload() {
     progress: getProgress(),
     wrongNote: getWrongNote(),
     scores: getScores(),
-    theme: localStorage.getItem(THEME_KEY) || 'pink'
+    theme: localStorage.getItem(THEME_KEY) || 'pink',
+    cardSize: localStorage.getItem(CARD_SIZE_KEY) || 'normal'
   };
 }
 
@@ -802,6 +848,7 @@ function importData(event) {
       saveWrongNote(data.wrongNote || []);
       saveScores(data.scores || {});
       applyTheme(data.theme || 'pink');
+      applyCardSize(data.cardSize || 'normal');
       renderHome();
       updateTabBar('home');
       showToast('복원 완료!');
@@ -822,6 +869,7 @@ function renderHome() {
   document.getElementById('header-subtitle').classList.remove('hidden');
   document.getElementById('app-version').textContent = `v${APP_VERSION}`;
   renderThemeButtons();
+  renderCardSizeButtons();
 
   const nextDay = getNextDayIndex();
   const nextLearned = getDayLearnedCount(nextDay);
@@ -1440,6 +1488,7 @@ document.addEventListener('keydown', (e) => {
 
 // ==================== INIT ====================
 initTheme();
+initCardSize();
 renderHome();
 updateTabBar('home');
 </script>
