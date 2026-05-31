@@ -91,6 +91,16 @@ body{
 .theme-panel,.card-size-panel,.backup-panel{
   background:var(--card-bg);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);
 }
+.backup-panel{padding:0;overflow:hidden}
+.backup-panel summary{
+  list-style:none;cursor:pointer;padding:12px 14px;font-size:0.82rem;font-weight:800;color:var(--text);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.backup-panel summary::-webkit-details-marker{display:none}
+.backup-panel summary::after{content:'+';font-size:1rem;color:var(--text-light)}
+.backup-panel[open] summary::after{content:'-'}
+.backup-panel .backup-inner{padding:0 14px 14px}
+.parent-help{font-size:0.72rem;color:var(--text-light);line-height:1.5;margin-top:8px}
 .panel-title{font-size:0.78rem;font-weight:800;color:var(--text-light);margin-bottom:9px}
 .theme-buttons,.card-size-buttons,.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
 .theme-btn,.card-size-btn,.backup-btn{
@@ -393,15 +403,19 @@ body{padding-bottom:64px}
       <div class="panel-title">플래시카드 크기</div>
       <div class="card-size-buttons" id="card-size-buttons"></div>
     </div>
-    <div class="backup-panel">
-      <div class="panel-title">학습 기록</div>
+    <details class="backup-panel">
+      <summary>보호자 메뉴</summary>
+      <div class="backup-inner">
+      <div class="panel-title">학습 기록 보관</div>
       <div class="backup-buttons">
-        <button class="backup-btn primary" onclick="exportData()">백업하기</button>
-        <button class="backup-btn" onclick="document.getElementById('restore-file').click()">복원하기</button>
-        <button class="backup-btn warning" onclick="resetProgress()">초기화</button>
+        <button class="backup-btn primary" onclick="exportData()">기록 저장하기</button>
+        <button class="backup-btn" onclick="document.getElementById('restore-file').click()">기록 불러오기</button>
+        <button class="backup-btn warning" onclick="resetProgress()">기록 초기화</button>
       </div>
+      <div class="parent-help">기록은 이 기기 브라우저에 저장돼요. 휴대폰을 바꾸거나 앱으로 옮길 때만 사용하세요.</div>
       <input type="file" id="restore-file" class="hidden" accept="application/json,.json" onchange="importData(event)">
-    </div>
+      </div>
+    </details>
     <div class="app-version" id="app-version">v1.1</div>
   </div>
   <div class="day-grid" id="day-grid"></div>
