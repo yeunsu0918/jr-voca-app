@@ -12,6 +12,27 @@
   --bg:#FFF5F7;--card-bg:#FFFFFF;--text:#4A4A4A;--text-light:#7A7A7A;
   --shadow:0 4px 15px rgba(0,0,0,0.08);--radius:20px;
 }
+body[data-theme="ocean"]{
+  --pink:#9AD8F5;--purple:#7BA7D7;--mint:#B6E6DD;--yellow:#E8F6B0;
+  --blue:#5FB3D9;--coral:#4E8ECF;--lavender:#B7C9F2;--peach:#EAF7FF;
+  --bg:#EFFAFF;--card-bg:#FFFFFF;--text:#25445A;--text-light:#6A8395;
+}
+body[data-theme="forest"]{
+  --pink:#C8E6C9;--purple:#A5D6A7;--mint:#8FD6B3;--yellow:#F3E6A2;
+  --blue:#9DD6C2;--coral:#7CB884;--lavender:#D4E7C5;--peach:#F8F4D8;
+  --bg:#F4FBF2;--card-bg:#FFFFFF;--text:#304B35;--text-light:#71826F;
+}
+body[data-theme="sunset"]{
+  --pink:#FFB4A2;--purple:#CDB4DB;--mint:#BDE0D4;--yellow:#FFD6A5;
+  --blue:#A2D2FF;--coral:#FF8FAB;--lavender:#FFC8DD;--peach:#FFF1E6;
+  --bg:#FFF7F0;--card-bg:#FFFFFF;--text:#57413B;--text-light:#8A756D;
+}
+body[data-theme="night"]{
+  --pink:#8E7DBE;--purple:#6F79B8;--mint:#7BC6B0;--yellow:#E8C778;
+  --blue:#6EA7C8;--coral:#D9899E;--lavender:#9D8CCC;--peach:#2D3248;
+  --bg:#1F2433;--card-bg:#2A3042;--text:#F2F4FA;--text-light:#BBC4D6;
+  --shadow:0 4px 18px rgba(0,0,0,0.25);
+}
 @font-face{font-family:'emoji';src:local('Segoe UI Emoji'),local('Apple Color Emoji'),local('Noto Color Emoji')}
 body{
   font-family:'Segoe UI','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
@@ -49,6 +70,35 @@ body{
 }
 .progress-label{font-size:0.75rem;color:var(--text-light);margin-top:4px;text-align:center}
 /* === HOME SCREEN === */
+.home-panel{
+  max-width:600px;margin:0 auto;padding:14px 16px 0;
+  display:flex;flex-direction:column;gap:10px;
+}
+.continue-card{
+  background:var(--card-bg);border:none;border-radius:16px;padding:14px 16px;
+  box-shadow:var(--shadow);text-align:left;cursor:pointer;color:var(--text);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.continue-card:active{transform:scale(0.98)}
+.continue-main{font-weight:800;font-size:0.95rem}
+.continue-sub{font-size:0.78rem;color:var(--text-light);margin-top:3px}
+.theme-panel,.backup-panel{
+  background:var(--card-bg);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);
+}
+.panel-title{font-size:0.78rem;font-weight:800;color:var(--text-light);margin-bottom:9px}
+.theme-buttons,.backup-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.theme-btn,.backup-btn{
+  border:1px solid #e4dfe5;background:var(--card-bg);color:var(--text);
+  border-radius:16px;padding:8px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;
+}
+.theme-btn.active{border-color:var(--coral);color:var(--coral);background:rgba(255,255,255,0.7)}
+.theme-dot{
+  display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px;
+  background:linear-gradient(135deg,var(--dot-a),var(--dot-b));
+}
+.backup-btn.primary{background:linear-gradient(135deg,var(--mint),var(--blue));color:#fff;border:none}
+.backup-btn.warning{color:var(--coral)}
+.app-version{font-size:0.7rem;color:var(--text-light);text-align:center;padding:4px 0 0}
 #home-screen .day-grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
   gap:10px;padding:16px;max-width:600px;margin:0 auto;
@@ -84,6 +134,7 @@ body{
 .mode-btn.quiz-btn{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
 .day-word-list{padding:0 16px 16px}
 .day-word-list h3{font-size:0.9rem;color:var(--text-light);margin-bottom:10px;padding-left:4px}
+.day-score{font-size:0.72rem;color:var(--coral);font-weight:700;text-align:right;margin-bottom:8px}
 .word-item{
   display:flex;align-items:center;gap:10px;padding:10px 14px;
   background:var(--card-bg);border-radius:14px;margin-bottom:8px;
@@ -319,10 +370,30 @@ body{padding-bottom:64px}
 
 <!-- HOME SCREEN -->
 <div id="home-screen">
-  <div class="day-grid" id="day-grid"></div>
-  <div class="reset-area">
-    <button class="reset-btn" onclick="resetProgress()">학습 기록 초기화</button>
+  <div class="home-panel">
+    <button class="continue-card hidden" id="continue-card" onclick="continueLearning()">
+      <span>
+        <div class="continue-main" id="continue-main">이어하기</div>
+        <div class="continue-sub" id="continue-sub">다음 학습할 DAY로 이동</div>
+      </span>
+      <span>&#8594;</span>
+    </button>
+    <div class="theme-panel">
+      <div class="panel-title">테마</div>
+      <div class="theme-buttons" id="theme-buttons"></div>
+    </div>
+    <div class="backup-panel">
+      <div class="panel-title">학습 기록</div>
+      <div class="backup-buttons">
+        <button class="backup-btn primary" onclick="exportData()">백업하기</button>
+        <button class="backup-btn" onclick="document.getElementById('restore-file').click()">복원하기</button>
+        <button class="backup-btn warning" onclick="resetProgress()">초기화</button>
+      </div>
+      <input type="file" id="restore-file" class="hidden" accept="application/json,.json" onchange="importData(event)">
+    </div>
+    <div class="app-version" id="app-version">v1.1</div>
   </div>
+  <div class="day-grid" id="day-grid"></div>
 </div>
 
 <!-- DAY DETAIL SCREEN -->
@@ -341,6 +412,7 @@ body{padding-bottom:64px}
         <button class="hide-toggle" id="hide-ko-btn" onclick="toggleHideKo()">뜻 숨기기</button>
       </div>
     </div>
+    <div class="day-score hidden" id="day-score"></div>
     <div id="word-list-container"></div>
   </div>
 </div>
@@ -381,7 +453,7 @@ body{padding-bottom:64px}
     <span class="wrong-count" id="wrong-count">0&#xAC1C;</span>
   </div>
   <div class="wrong-actions" id="wrong-actions">
-    <button class="wrong-action-btn quiz" onclick="startWrongQuiz()">&#x1F4DD; &#xD2C0;&#xB9B0; &#xBB38;&#xC81C; &#xD038;&#xC988;</button>
+    <button class="wrong-action-btn quiz" onclick="startWrongQuiz()">&#x1F4DD; &#xD2C0;&#xB9B0; &#xBB38;&#xC81C; &#xD034;&#xC988;</button>
     <button class="wrong-action-btn flash" onclick="startWrongFlashcard()">&#x1F0CF; &#xD50C;&#xB798;&#xC2DC;&#xCE74;&#xB4DC;</button>
     <button class="wrong-action-btn clear" onclick="clearWrongNote()">&#xC804;&#xCCB4; &#xC0AD;&#xC81C;</button>
   </div>
@@ -537,10 +609,21 @@ let quizIndex = 0;
 let quizCorrect = 0;
 let quizWrong = [];
 let hideKoMode = false;
+let activeQuizMeta = null;
 
 // ==================== LOCALSTORAGE ====================
+const APP_VERSION = '1.1';
 const STORAGE_KEY = 'jr_voca_progress';
 const WRONG_NOTE_KEY = 'jr_voca_wrong_note';
+const SCORE_KEY = 'jr_voca_scores';
+const THEME_KEY = 'jr_voca_theme';
+const THEME_LIST = [
+  { id: 'pink', name: '핑크', a: '#FFB6C1', b: '#C3AED6' },
+  { id: 'ocean', name: '바다', a: '#5FB3D9', b: '#B6E6DD' },
+  { id: 'forest', name: '숲', a: '#7CB884', b: '#F3E6A2' },
+  { id: 'sunset', name: '노을', a: '#FF8FAB', b: '#FFD6A5' },
+  { id: 'night', name: '밤', a: '#6F79B8', b: '#7BC6B0' }
+];
 
 function getProgress() {
   try {
@@ -551,6 +634,14 @@ function getProgress() {
 
 function saveProgress(progress) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+function setWordLearned(dayIdx, wordIdx, learned) {
+  const p = getProgress();
+  const key = `d${dayIdx}_w${wordIdx}`;
+  if (learned) p[key] = 1;
+  else delete p[key];
+  saveProgress(p);
 }
 
 function isWordLearned(dayIdx, wordIdx) {
@@ -581,11 +672,144 @@ function getTotalLearned() {
 }
 
 function resetProgress() {
-  if (confirm('정말 학습 기록을 모두 초기화할까요?')) {
+  if (confirm('정말 학습 기록, 오답노트, 점수 기록을 모두 초기화할까요?')) {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(WRONG_NOTE_KEY);
+    localStorage.removeItem(SCORE_KEY);
     renderHome();
+    updateTabBar('home');
     showToast('초기화 완료!');
   }
+}
+
+function getScores() {
+  try {
+    const data = localStorage.getItem(SCORE_KEY);
+    return data ? JSON.parse(data) : {};
+  } catch { return {}; }
+}
+
+function saveScores(scores) {
+  localStorage.setItem(SCORE_KEY, JSON.stringify(scores));
+}
+
+function recordQuizScore(meta, correct, total) {
+  if (!meta || meta.type !== 'day' || !total) return;
+  const scores = getScores();
+  const key = `d${meta.dayIdx}_${meta.mode}`;
+  const pct = Math.round((correct / total) * 100);
+  const prev = scores[key] || {};
+  scores[key] = {
+    bestPct: Math.max(prev.bestPct || 0, pct),
+    bestCorrect: (prev.bestPct || 0) > pct ? prev.bestCorrect : correct,
+    total,
+    lastPct: pct,
+    lastCorrect: correct,
+    updatedAt: Date.now()
+  };
+  saveScores(scores);
+}
+
+function getBestDayScore(dayIdx) {
+  const scores = getScores();
+  let best = null;
+  Object.keys(scores).forEach(key => {
+    if (!key.startsWith(`d${dayIdx}_`)) return;
+    const score = scores[key];
+    if (!best || (score.bestPct || 0) > best.bestPct) best = score;
+  });
+  return best;
+}
+
+function getNextDayIndex() {
+  for (let i = 0; i < VOCAB_DATA.length; i++) {
+    if (getDayLearnedCount(i) < VOCAB_DATA[i].length) return i;
+  }
+  return VOCAB_DATA.length - 1;
+}
+
+function continueLearning() {
+  openDay(getNextDayIndex());
+}
+
+function applyTheme(themeId) {
+  const id = THEME_LIST.some(t => t.id === themeId) ? themeId : 'pink';
+  if (id === 'pink') document.body.removeAttribute('data-theme');
+  else document.body.dataset.theme = id;
+  localStorage.setItem(THEME_KEY, id);
+  renderThemeButtons();
+}
+
+function renderThemeButtons() {
+  const wrap = document.getElementById('theme-buttons');
+  if (!wrap) return;
+  const current = localStorage.getItem(THEME_KEY) || 'pink';
+  wrap.innerHTML = '';
+  THEME_LIST.forEach(theme => {
+    const btn = document.createElement('button');
+    btn.className = 'theme-btn' + (theme.id === current ? ' active' : '');
+    btn.type = 'button';
+    btn.onclick = () => applyTheme(theme.id);
+    btn.innerHTML = `<span class="theme-dot" style="--dot-a:${theme.a};--dot-b:${theme.b}"></span>${theme.name}`;
+    wrap.appendChild(btn);
+  });
+}
+
+function initTheme() {
+  const theme = localStorage.getItem(THEME_KEY) || 'pink';
+  if (theme !== 'pink') document.body.dataset.theme = theme;
+}
+
+function getBackupPayload() {
+  return {
+    app: 'jr-voca-app',
+    version: APP_VERSION,
+    exportedAt: new Date().toISOString(),
+    progress: getProgress(),
+    wrongNote: getWrongNote(),
+    scores: getScores(),
+    theme: localStorage.getItem(THEME_KEY) || 'pink'
+  };
+}
+
+function exportData() {
+  const payload = JSON.stringify(getBackupPayload(), null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `jr-voca-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('백업 파일을 만들었어요');
+}
+
+function importData(event) {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (data.app !== 'jr-voca-app' || !data.progress || !Array.isArray(data.wrongNote || [])) {
+        throw new Error('invalid backup');
+      }
+      if (!confirm('백업 파일의 학습 기록으로 복원할까요? 현재 기록은 바뀝니다.')) return;
+      saveProgress(data.progress || {});
+      saveWrongNote(data.wrongNote || []);
+      saveScores(data.scores || {});
+      applyTheme(data.theme || 'pink');
+      renderHome();
+      updateTabBar('home');
+      showToast('복원 완료!');
+    } catch {
+      showToast('백업 파일을 읽을 수 없어요');
+    }
+  };
+  reader.readAsText(file);
 }
 
 // ==================== RENDERING ====================
@@ -596,6 +820,15 @@ function renderHome() {
   document.getElementById('header-title').textContent = '주니어 능률 VOCA 기본';
   document.getElementById('header-subtitle').textContent = '\uC601\uC5B4 \uB2E8\uC5B4 \uD559\uC2B5';
   document.getElementById('header-subtitle').classList.remove('hidden');
+  document.getElementById('app-version').textContent = `v${APP_VERSION}`;
+  renderThemeButtons();
+
+  const nextDay = getNextDayIndex();
+  const nextLearned = getDayLearnedCount(nextDay);
+  const continueCard = document.getElementById('continue-card');
+  continueCard.classList.remove('hidden');
+  document.getElementById('continue-main').textContent = `DAY ${String(nextDay + 1).padStart(2, '0')} 이어하기`;
+  document.getElementById('continue-sub').textContent = `현재 ${nextLearned}/20 학습`;
 
   const grid = document.getElementById('day-grid');
   grid.innerHTML = '';
@@ -632,6 +865,15 @@ function openDay(dayIdx) {
   const words = VOCAB_DATA[dayIdx];
   const learned = getDayLearnedCount(dayIdx);
   document.getElementById('day-word-count').textContent = `단어 목록 (${learned}/20 학습)`;
+  const bestScore = getBestDayScore(dayIdx);
+  const scoreEl = document.getElementById('day-score');
+  if (bestScore) {
+    scoreEl.classList.remove('hidden');
+    scoreEl.textContent = `최고 점수 ${bestScore.bestCorrect}/${bestScore.total} (${bestScore.bestPct}%)`;
+  } else {
+    scoreEl.classList.add('hidden');
+    scoreEl.textContent = '';
+  }
 
   const container = document.getElementById('word-list-container');
   container.innerHTML = '';
@@ -711,17 +953,27 @@ function nextCard() {
 }
 
 function toggleKnow() {
-  toggleWordLearned(currentDay, currentCardIndex);
+  if (window._wrongFlashcardMode) {
+    showToast('\uD83D\uDCA1 복습했어요!');
+    return;
+  }
+  if (!isWordLearned(currentDay, currentCardIndex)) {
+    setWordLearned(currentDay, currentCardIndex, true);
+    showToast('\u{1F31F} 잘했어요!');
+  }
   renderFlashcard();
-  const isLearned = isWordLearned(currentDay, currentCardIndex);
-  if (isLearned) showToast('\u{1F31F} 잘했어요!');
 }
 
 function speakWord() {
   const isWrongMode = window._wrongFlashcardMode && window._wrongFlashcardData;
   const words = isWrongMode ? window._wrongFlashcardData : VOCAB_DATA[currentDay];
   const w = words[currentCardIndex].en;
+  if (window.AndroidBridge && typeof window.AndroidBridge.speak === 'function') {
+    window.AndroidBridge.speak(w);
+    return;
+  }
   if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(w);
     u.lang = 'en-US';
     u.rate = 0.85;
@@ -740,14 +992,16 @@ function startQuiz(reviewWords, mode) {
   quizCorrect = 0;
   quizWrong = [];
   if (mode) quizMode = mode;
+  activeQuizMeta = reviewWords ? { type: 'review', mode: quizMode, dayIdx: currentDay } : { type: 'day', mode: quizMode, dayIdx: currentDay };
   showScreen('quiz-screen');
 
   const modeNames = {'mc-ko':'\uAC1D\uAD00\uC2DD(\uB73B)', 'mc-en':'\uAC1D\uAD00\uC2DD(\uC601\uC5B4)', 'typing-ko':'\uC8FC\uAD00\uC2DD(\uB73B)', 'typing-en':'\uC8FC\uAD00\uC2DD(\uC601\uC5B4)'};
-  document.getElementById('header-title').textContent = `DAY ${String(currentDay+1).padStart(2,'0')} ${modeNames[quizMode] || '\uD038\uC988'}`;
+  document.getElementById('header-title').textContent = `DAY ${String(currentDay+1).padStart(2,'0')} ${modeNames[quizMode] || '\uD034\uC988'}`;
 
+  const isReview = !!reviewWords;
   const dayWords = reviewWords || VOCAB_DATA[currentDay];
   quizQuestions = dayWords.map((w, idx) => {
-    const q = { en: w.en, ko: w.ko, dayIdx: currentDay, wordIdx: idx };
+    const q = { en: w.en, ko: w.ko, dayIdx: w.dayIdx ?? currentDay, wordIdx: isReview ? -1 : idx };
 
     if (quizMode === 'mc-ko') {
       const wrongPool = [];
@@ -827,7 +1081,7 @@ function selectMC(btn, idx) {
   if (chosen === q.correct) {
     btn.classList.add('correct');
     quizCorrect++;
-    if (q.wordIdx >= 0) toggleWordLearned(q.dayIdx, q.wordIdx);
+    if (q.wordIdx >= 0) setWordLearned(q.dayIdx, q.wordIdx, true);
     if (q.fromWrongNote) removeFromWrongNote(q.en, q.dayIdx);
   } else {
     btn.classList.add('wrong');
@@ -864,7 +1118,7 @@ function checkTyping() {
     input.style.borderColor = '#6bcb77';
     input.style.background = '#e8f9ea';
     fb.innerHTML = '<span style="color:#6bcb77;font-size:1.2rem;font-weight:700">\u2705 \uC815\uB2F5!</span>';
-    if (q.wordIdx >= 0) toggleWordLearned(q.dayIdx, q.wordIdx);
+    if (q.wordIdx >= 0) setWordLearned(q.dayIdx, q.wordIdx, true);
     if (q.fromWrongNote) removeFromWrongNote(q.en, q.dayIdx);
   } else {
     quizWrong.push(q);
@@ -880,6 +1134,7 @@ function checkTyping() {
 function renderQuizResult() {
   const total = quizQuestions.length;
   const pct = Math.round((quizCorrect / total) * 100);
+  recordQuizScore(activeQuizMeta, quizCorrect, total);
   document.getElementById('quiz-progress-fill').style.width = '100%';
   document.getElementById('quiz-score-label').textContent = '';
 
@@ -910,7 +1165,7 @@ function renderQuizResult() {
 }
 
 function startReviewQuiz() {
-  const reviewWords = quizWrong.map(q => ({ en: q.en, ko: q.ko }));
+  const reviewWords = quizWrong.map(q => ({ en: q.en, ko: q.ko, dayIdx: q.dayIdx }));
   startQuiz(reviewWords, quizMode);
 }
 
@@ -1015,7 +1270,7 @@ function renderWrongNote() {
       <span class="day-title">DAY ${String(dayIdx + 1).padStart(2, '0')}</span>
       <span>
         <span class="day-count">${dayNotes.length}\uAC1C</span>
-        <button class="wrong-day-quiz-btn" onclick="event.stopPropagation(); startWrongDayQuiz(${dayIdx})">DAY \uD038\uC988</button>
+        <button class="wrong-day-quiz-btn" onclick="event.stopPropagation(); startWrongDayQuiz(${dayIdx})">DAY \uD034\uC988</button>
       </span>
     `;
     group.appendChild(header);
@@ -1043,7 +1298,7 @@ function renderWrongNote() {
 
 function startWrongDayQuiz(dayIdx) {
   const notes = getWrongNote().filter(n => n.day === dayIdx);
-  if (notes.length < 2) { showToast('\uCD5C\uC18C 2\uAC1C \uC774\uC0C1 \uD544\uC694'); return; }
+  if (notes.length < 1) { showToast('\uC624\uB2F5\uB178\uD2B8\uAC00 \uBE44\uC5B4\uC788\uC5B4\uC694'); return; }
   window._cameFromWrong = true;
   currentDay = dayIdx;
   currentScreen = 'quiz';
@@ -1051,8 +1306,9 @@ function startWrongDayQuiz(dayIdx) {
   quizCorrect = 0;
   quizWrong = [];
   quizMode = 'mc-ko';
+  activeQuizMeta = { type: 'wrong-day', mode: quizMode, dayIdx };
   showScreen('quiz-screen');
-  document.getElementById('header-title').textContent = 'DAY ' + String(dayIdx+1).padStart(2,'0') + ' \uC624\uB2F5 \uD038\uC988';
+  document.getElementById('header-title').textContent = 'DAY ' + String(dayIdx+1).padStart(2,'0') + ' \uC624\uB2F5 \uD034\uC988';
 
   quizQuestions = notes.map(n => {
     const wrongPool = [];
@@ -1067,13 +1323,14 @@ function startWrongDayQuiz(dayIdx) {
 
 function startWrongQuiz() {
   const notes = getWrongNote();
-  if (notes.length < 2) { showToast('\uCD5C\uC18C 2\uAC1C \uC774\uC0C1\uC758 \uB2E8\uC5B4\uAC00 \uD544\uC694\uD574\uC694'); return; }
+  if (notes.length < 1) { showToast('\uC624\uB2F5\uB178\uD2B8\uAC00 \uBE44\uC5B4\uC788\uC5B4\uC694'); return; }
   currentScreen = 'quiz';
   quizIndex = 0;
   quizCorrect = 0;
   quizWrong = [];
+  activeQuizMeta = { type: 'wrong-all', mode: 'mc-ko' };
   showScreen('quiz-screen');
-  document.getElementById('header-title').textContent = '\uD83D\uDCD3 \uC624\uB2F5 \uD038\uC988';
+  document.getElementById('header-title').textContent = '\uD83D\uDCD3 \uC624\uB2F5 \uD034\uC988';
 
   quizQuestions = notes.map(n => {
     const correctKo = n.ko;
@@ -1086,7 +1343,7 @@ function startWrongQuiz() {
     shuffle(wrongPool);
     const choices = [correctKo, wrongPool[0], wrongPool[1], wrongPool[2]];
     shuffle(choices);
-    return { en: n.en, ko: correctKo, choices, dayIdx: n.day, wordIdx: -1, fromWrongNote: true };
+    return { en: n.en, ko: correctKo, choices, correct: correctKo, prompt: n.en, dayIdx: n.day, wordIdx: -1, fromWrongNote: true };
   });
   shuffle(quizQuestions);
   renderQuizQuestion();
@@ -1182,6 +1439,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==================== INIT ====================
+initTheme();
 renderHome();
 updateTabBar('home');
 </script>
